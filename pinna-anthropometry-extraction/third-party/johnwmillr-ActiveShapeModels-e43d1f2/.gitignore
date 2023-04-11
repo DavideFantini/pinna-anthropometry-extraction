@@ -1,0 +1,32 @@
+# Specific files
+shapeModel_CootesTaylor.m
+
+# Face images & videos
+*.jpg
+*.Jpg
+*.png
+*.ai
+*.mp4
+
+# Ignore directories
+/Faces
+/Media
+/Old
+/Landmarks
+/scratch
+/SavedModels
+/Evaluation
+
+# Matlab files
+*_v*.m
+*.m~
+*.mat
+*.asv
+
+# Dropbox settings and caches
+*.dropbox
+*.dropbox.attr
+*.dropbox.cache
+
+# OS X
+*.DS_Store
