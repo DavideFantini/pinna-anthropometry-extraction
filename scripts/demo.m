@@ -17,3 +17,5 @@ z_scale = 114.285714285714;
 [anthropometry,landmarks,img_features] = get_pinna_features(cfg, ...
     pinna_img, 'xy_scale', xy_scale, 'z_scale', z_scale);
 
+% Visualize results
+plot_results(cfg, pinna_img, anthropometry, landmarks);

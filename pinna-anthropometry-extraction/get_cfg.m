@@ -12,6 +12,7 @@ function [cfg] = get_cfg()
     cfg.mat_version = '-v7.3';
     % 0: no verbose - 1: minor verbose - 2: complete verbose
     cfg.verbose = 2;
+    cfg.heatmap_colormap = 'gray';
     
 
     % ============================= LANDMARKS ===========================

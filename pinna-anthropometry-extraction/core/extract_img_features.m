@@ -62,7 +62,7 @@ function [img_features] = extract_img_features(cfg, pinna_imgs, reg_info)
                     'Radius', floor(min(cfg.img_features.lbp.radius, min(size(img_for_feat, 1), size(img_for_feat, 2))/2-1)), ...
                     'Normalization', cfg.img_features.lbp.norm)';
 
-                if ~exist('features', 'var')
+                if ~exist('img_features', 'var')
                     single_feat_len = size(f, 1);
                     img_features = zeros(n_pinna_imgs, single_feat_len * n_img * n_areas);
             
