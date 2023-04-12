@@ -13,6 +13,9 @@ function [cfg] = get_cfg()
     % 0: no verbose - 1: minor verbose - 2: complete verbose
     cfg.verbose = 2;
     cfg.heatmap_colormap = 'gray';
+
+    cfg.img_width = 140;
+    cfg.img_height = 160;
     
 
     % ============================= LANDMARKS ===========================
@@ -39,7 +42,7 @@ function [cfg] = get_cfg()
     cfg.asm.n_pcs = 10;
     cfg.asm.m = 0.005;
 
-    cfg.asm.visualize_fitting = false;
+    cfg.asm.visualize_fitting = true;
 
 
     % =========================== ANTHROPOMETRY ========================= %

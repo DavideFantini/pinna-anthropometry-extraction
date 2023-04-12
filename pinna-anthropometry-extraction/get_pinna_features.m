@@ -33,7 +33,11 @@ function [anthropometry,landmarks,img_features] = get_pinna_features(cfg,pinna_i
 %              from pixel units to the unit of measurement of your interest
 %              (e.g. cm). If xy_scale is provided you must provide z_scale,
 %              too.
-%
+%   - right_pinna: whether in the provided images are represented right
+%                  pinnae. It is a boolean array with one element for each 
+%                  pinna. For the true elements, the corresponding pinna 
+%                  image will be flipped.
+%                  [# pinnae]
 %
 % OUTPUT
 %   - anthropometry: table with the measured anthropometry. The columns
@@ -53,11 +57,18 @@ function [anthropometry,landmarks,img_features] = get_pinna_features(cfg,pinna_i
         NameValueArgs.landmarks_xy {mustBeNumeric} = []
         NameValueArgs.xy_scale {mustBeScalarOrEmpty} = 1
         NameValueArgs.z_scale {mustBeScalarOrEmpty} = 1
+        NameValueArgs.right_pinna {mustBeVector} = false(size(pinna_imgs,1),1)
     end
 
     landmarks_xy = NameValueArgs.landmarks_xy;
     xy_scale = NameValueArgs.xy_scale;
     z_scale = NameValueArgs.z_scale;
+    right_pinna = NameValueArgs.right_pinna;
+
+
+    % ======================= IMAGE PRE-PROCESSING ====================== %
+    % Pre-process pinna images
+    pinna_imgs = pinna_images_preprocessing(cfg, pinna_imgs, right_pinna);
 
 
     % ======================== LANDMARKS FITTING ======================== %

@@ -21,7 +21,7 @@ function [] = plot_results(cfg, pinna_imgs, anthropometry, landmarks, reg_info)
         pinna_img = squeeze(pinna_imgs(n, :, :));
         landmark = squeeze(landmarks(n, :, :));
 
-        fig = figure('WindowState','maximized');
+        figure('WindowState','maximized');
         ax = gca;
     
         plot_landmarks_on_images(cfg, pinna_img, landmark, ax);
