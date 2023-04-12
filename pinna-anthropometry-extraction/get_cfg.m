@@ -10,6 +10,8 @@ function [cfg] = get_cfg()
     
     % ============================== GENERAL ============================ %
     cfg.mat_version = '-v7.3';
+    % 0: no verbose - 1: minor verbose - 2: complete verbose
+    cfg.verbose = 2;
     
 
     % ============================= LANDMARKS ===========================
@@ -27,7 +29,7 @@ function [cfg] = get_cfg()
 
 
     % ================================ ASM ============================== %
-    cfg.asm.models_path = 'models/asm_models.mat';
+    cfg.asm.models_folder = 'models/';
 
     cfg.asm.evolutions = [5 5];
     cfg.asm.search_sizes = [4 2];
@@ -75,4 +77,13 @@ function [cfg] = get_cfg()
         'r18','r19','r20','r21',...
         't3'};
 
+
+    % ========================== IMAGE FEATURES ======================== %
+    cfg.img_features.gabor.wavelength = 4;
+    cfg.img_features.gabor.orientation = [0 22.5 45 67.5 90];
+
+    cfg.img_features.lbp.upright = false;
+    cfg.img_features.lbp.n_neighbors = 4;
+    cfg.img_features.lbp.radius = 4;
+    cfg.img_features.lbp.norm = 'none';
 end

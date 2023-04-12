@@ -8,10 +8,12 @@ cfg = get_cfg();
 path_pinna_img = '../pinna_img_demo.mat';
 load(path_pinna_img, 'pinna_img');
 
-% Set estimated xy and z scales to cm conversion
+% Set estimated xy and z scales to cm conversion for the demo pinna image
+% Set to 1 to get the measurements in pixels
 xy_scale = 0.05;
 z_scale = 114.285714285714;
 
 % Extract pinna features
 [anthropometry,landmarks,img_features] = get_pinna_features(cfg, ...
     pinna_img, 'xy_scale', xy_scale, 'z_scale', z_scale);
+

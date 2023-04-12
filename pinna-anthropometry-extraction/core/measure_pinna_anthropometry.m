@@ -1,6 +1,7 @@
 function [anthropometry, anthropometry_units] = measure_pinna_anthropometry(cfg,pinna_imgs,landmarks,reg_info,NameValueArgs)
 % This function performs the propor extraction of the anthropometric
-% measurements given the pinna landmarks and images
+% measurements given the pinna landmarks and images.
+%
 % INPUT
 %   - cfg: configuration structure
 %   - pinna_imgs: images of the pinnae
@@ -16,7 +17,10 @@ function [anthropometry, anthropometry_units] = measure_pinna_anthropometry(cfg,
 %              measurement of your interest (e.g. cm).
 %
 % OUTPUT
-%   - anthropometry: table with the anthropometric measurements
+%   - anthropometry: table with the measured anthropometry. The columns
+%                    represent the anthropometric parameters, while the
+%                    rows represent the pinnae
+%                    [# pinna images X # anthropometry]
 
 
     % ============================ ARGUMENTS ============================ %
@@ -32,18 +36,27 @@ function [anthropometry, anthropometry_units] = measure_pinna_anthropometry(cfg,
     xy_scale = NameValueArgs.xy_scale;
     z_scale = NameValueArgs.z_scale;
 
+    if cfg.verbose >= 1
+        disp('MEASURE ANTHROPOMETRY');
+    end
+
     % ========================== INITIALIZATION ========================= %
     % Number of metrics
     n_metrics= numel(cfg.anthropometry.metrics_name);
     % Number of ear images
-    n_pinnae = size(pinna_imgs,1);
+    n_pinna_imgs = size(pinna_imgs,1);
 
     % Initialize the measurements martrix
-    measurements_pxl = zeros(n_pinnae,n_metrics);
+    measurements_pxl = zeros(n_pinna_imgs,n_metrics);
 
     
     % ======================= COMPUTE MEASURMENTS ======================= %
-    for n=1:n_pinnae
+    for n = 1:n_pinna_imgs
+        if cfg.verbose >= 2
+            disp(['Measuring anthropometry for image ' num2str(n) '/' ...
+                num2str(n_pinna_imgs) ' ...']);
+        end
+
         % Get n-th pinna image
         pinna_img = squeeze(pinna_imgs(n,:,:));
 

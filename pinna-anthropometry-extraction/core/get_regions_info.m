@@ -14,6 +14,10 @@ function [reg_info] = get_regions_info(cfg, pinna_imgs, landmarks)
         landmarks (:,:,:) {mustBeNumeric}
     end
 
+    if cfg.verbose >= 1
+        disp("Obtaining regions' info...");
+    end
+
     % Suppress polyshape warning
     warning('off', 'MATLAB:polyshape:repairedBySimplify');
 

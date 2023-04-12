@@ -1,9 +1,35 @@
-function [landmarks] = fit_landmarks(cfg,pinna_imgs, options)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+function [landmarks] = fit_landmarks(cfg, pinna_imgs, options)
+% This function automatically the pinna landmarks using ASM algorithm.
+%
+% INPUT
+%   Required:
+%   - cfg: configuration structure
+%   - pinna_imgs: pinna range image(s) on which fit the landmarks
+%                 [# pinna images X height resolution X width resolution]
+%   Optional:
+%   - options: ASM options
+%       -> evolutions: number of ASM iterations. It can be a scalar or a
+%                      vector of 2 elements representing the starting and 
+%                      the ending number of ASM iterations for the 3 image
+%                      resolutions evaluated by ASM.
+%       -> search_sizes: search length (in pixels). It can be a scalar or a
+%                        vector of 2 elements representing the starting and 
+%                        the ending search sizes for the 3 image
+%                        resolutions evaluated by ASM.
+%       -> dist_metric: distance metric used for measuring accuracy of
+%                       shifted profiles. It can be 'pca' or 'maha'
+%                       (Mahalanobis).
+%       -> n_pcs: number of principal components considered
+%       -> m: normal contour, limit to +- m*sqrt(eigenvalue)
+%       -> visualiza_fitting: whether to visualize the fitting plot
+%
+% OUTPUT
+%   - landmarks: fitted landmarks
+%                [# pinna images X # landmarks X 2 coordinates]
+
 
     arguments
-        cfg
+        cfg {isstruct}
         pinna_imgs (:,:,:) {mustBeNumeric}
         options.evolutions (1,2) {mustBeNumeric} = cfg.asm.evolutions
         options.search_sizes (1,2) {mustBeNumeric} = cfg.asm.search_sizes
@@ -14,29 +40,24 @@ function [landmarks] = fit_landmarks(cfg,pinna_imgs, options)
         options.visualize_fitting (1,1) = cfg.asm.visualize_fitting
     end
 
+    if cfg.verbose >= 1
+        disp('ASM LANDAMARKS FITTING');
+    end
 
     % Number of pinna images
     n_pinna_imgs = size(pinna_imgs, 1);
 
-%     % IMAGES PRE-PROCESSING
-%     if cfg.landmarks.w_step ~= 0
-% 
-%         % Perform step edge magnitude on range images
-%         step_edge_magnitude = stepEdgeMagnitude(pinna_imgs);
-%         
-%         % Mix the original images with the step edge magnitude version
-%         pinna_imgs = (1-cfg.landmarks.w_step) .* pinna_imgs +...
-%             (cfg.landmarks.w_step .* step_edge_magnitude);
-%     end
-
     % LOAD ASM MODEL
-    load(cfg.asm.models_path, 'model');
+    model = load_asm_model(cfg);
 
     % FIT ASM
     landmarks = zeros(n_pinna_imgs, model.n_landmarks, 2);
 
     for n = 1:n_pinna_imgs
-        disp(['Fitting image ' num2str(n) '/' num2str(n_pinna_imgs) ' ...']);
+        if cfg.verbose >= 2
+            disp(['Fitting image ' num2str(n) '/' ...
+                num2str(n_pinna_imgs) ' ...']);
+        end
 
         pinna_img = squeeze(pinna_imgs(n,:,:));
 
@@ -50,11 +71,6 @@ function [landmarks] = fit_landmarks(cfg,pinna_imgs, options)
             'm', options.m, ...
             'pinna_parts_idx', cfg.landmarks.pinna_parts_idx, ...
             'visualize', options.visualize_fitting);
-
-
-%         % Get the z coordinate of fitted landmarks from the range images
-%         landmarks(n,:,3) = get_image_z(pinna_imgs(:,:,n), ...
-%             landmarks(:,1,n), landmarks(:,2,n));
 
     end
 

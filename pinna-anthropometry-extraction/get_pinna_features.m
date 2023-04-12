@@ -36,67 +36,68 @@ function [anthropometry,landmarks,img_features] = get_pinna_features(cfg,pinna_i
 %
 %
 % OUTPUT
-%
+%   - anthropometry: table with the measured anthropometry. The columns
+%                    represent the anthropometric parameters, while the
+%                    rows represent the pinnae
+%                    [# pinna images X # anthropometry]
+%   - landmarks: fitted landmarks with x,y and z coordinates
+%                [# pinna images X # landmarks X 3 coordinates]
+%   - img_features: extracted image features
+%                   [# pinna images X # image features]
 
 
     % ============================ ARGUMENTS ============================ %
     arguments
         cfg {isstruct}
         pinna_imgs (:,:,:) {mustBeNumeric}
-        NameValueArgs.landmarks {mustBeNumeric} = []
+        NameValueArgs.landmarks_xy {mustBeNumeric} = []
         NameValueArgs.xy_scale {mustBeScalarOrEmpty} = 1
         NameValueArgs.z_scale {mustBeScalarOrEmpty} = 1
     end
 
-    landmarks = NameValueArgs.landmarks;
+    landmarks_xy = NameValueArgs.landmarks_xy;
     xy_scale = NameValueArgs.xy_scale;
     z_scale = NameValueArgs.z_scale;
 
+
     % ======================== LANDMARKS FITTING ======================== %
     % If landmarks are not provided in input, then ASM is used to get them
-    if isempty(landmarks)
-        landmarks = fit_landmarks(cfg, pinna_imgs);
+    if isempty(landmarks_xy)
+        landmarks_xy = fit_landmarks(cfg, pinna_imgs);
 
     end
 
     % If landmarks is a 2D array then convert it to 3D
-    if ismatrix(landmarks)
-        landmarks = landmarks_reshape(cfg, landmarks, '2Dto3D');
+    if ismatrix(landmarks_xy)
+        landmarks_xy = landmarks_reshape(cfg, landmarks_xy, '2Dto3D');
 
     end
 
-    if size(pinna_imgs, 1) ~= size(landmarks, 1)
+    % Check the correctness of landmarks
+    if size(pinna_imgs, 1) ~= size(landmarks_xy, 1)
         error(["Found " num2str(size(pinna_imgs, 1)) " and " ...
-            num2str(size(landmarks, 1)) ...
-            " landmarks. For each pinna image one set of landmarks musti be provided."]);
+            num2str(size(landmarks_xy, 1)) ...
+            " landmarks. For each pinna image one set of landmarks must be provided."]);
     end
 
-%     % If the z coordinate is missing, then get it from the range images
-%     if size(landmarks, 3) == 2
-%         landmarks(:,:,3) = get_image_z(pinna_imgs, ...
-%             landmarks(:,:,1), landmarks(:,:,2));
-% 
-%     end
-    
-    % Get the info needed to compute area metrics 
-    reg_info = get_regions_info(cfg, pinna_imgs, landmarks);
+    % Get z coordinate of landmarks
+    landmarks = landmarks_xy;
+    landmarks(:,:,3) = get_image_z(pinna_imgs, ...
+        landmarks_xy(:,:,1), landmarks_xy(:,:,2));
 
+    % Get the info needed to compute area metrics 
+    reg_info = get_regions_info(cfg, pinna_imgs, landmarks_xy);
+
+    
     % ==================== ANTHROPOMETRY EXTRACTION ===================== %
     % Compute measurements
     anthropometry = measure_pinna_anthropometry( ...
-        cfg, pinna_imgs, landmarks, reg_info,...
+        cfg, pinna_imgs, landmarks_xy, reg_info,...
         'xy_scale', xy_scale, 'z_scale', z_scale);
     
     
     % =================== IMAGE FEATURES EXTRACTION ===================== %
     % Extract image features
-    img_features = extract_img_features(cfg, pinna_imgs, area_coord_est);
+    img_features = extract_img_features(cfg, pinna_imgs, reg_info);
     
-    % Remove columns with all zeros
-    if ~strcmp(cfg.img.features.to_extract, 'raw')
-        features_to_keep = ~all(img_feat_man==0, 1) & ~all(img_feat_est==0, 1);
-        img_feat_man = img_feat_man(:, features_to_keep);
-        img_feat_est = img_feat_est(:, features_to_keep);
-    end
-
 end
