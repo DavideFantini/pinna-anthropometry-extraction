@@ -14,11 +14,13 @@ function [cfg] = get_cfg()
     cfg.verbose = 2;
     cfg.heatmap_colormap = 'gray';
 
+    % Size of the images used to train the ASM model
     cfg.img_width = 140;
     cfg.img_height = 160;
     
 
-    % ============================= LANDMARKS ===========================
+    % ============================= LANDMARKS =========================== %
+    % Number of landmarks used to train the ASM model
     cfg.landmarks.n_landmarks = 167;
     cfg.landmarks.n_coordinates = 3;
     cfg.landmarks.x_coordinate_idx = 1;
@@ -35,13 +37,23 @@ function [cfg] = get_cfg()
     % ================================ ASM ============================== %
     cfg.asm.models_folder = 'models/';
 
+    % Number of ASM iterations. It can be a scalar or a vector of 2 
+    % elements representing the starting and the ending number of ASM 
+    % iterations for the 3 image resolutions evaluated by ASM
     cfg.asm.evolutions = [5 5];
+    % Search length (in pixels). It can be a scalar or a vector of 2 
+    % elements representing the starting and the ending search sizes for
+    % the 3 image resolutions evaluated by ASM
     cfg.asm.search_sizes = [4 2];
-    % 'pca' or 'maha'
+    % Distance metric used for measuring accuracy of shifted profiles. It 
+    % can be 'pca' or 'maha' (Mahalanobis)
     cfg.asm.dist_metric = 'pca';
+    % Number of principal components considered by ASM
     cfg.asm.n_pcs = 10;
+    % Normal contour, limit to +- m*sqrt(eigenvalue)
     cfg.asm.m = 0.005;
 
+    % Whether to visualize the fitting plot
     cfg.asm.visualize_fitting = true;
 
 
@@ -82,10 +94,13 @@ function [cfg] = get_cfg()
         't3'};
 
 
-    % ========================== IMAGE FEATURES ======================== %
+    % =========================== IMAGE FEATURES ======================== %
+    % Wavelength of the Gabor filters
     cfg.img_features.gabor.wavelength = 4;
+    % Orientation of the Gabor filters
     cfg.img_features.gabor.orientation = [0 22.5 45 67.5 90];
 
+    % Local Binary Pattern settings
     cfg.img_features.lbp.upright = false;
     cfg.img_features.lbp.n_neighbors = 4;
     cfg.img_features.lbp.radius = 4;

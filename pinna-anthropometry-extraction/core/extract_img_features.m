@@ -1,4 +1,4 @@
-function [img_features] = extract_img_features(cfg, pinna_imgs, reg_info)
+function [img_features] = extract_img_features(cfg, pinna_imgs, cavity_info)
 % This function extract the features from pinna images cavities.
 %
 % INPUT
@@ -7,7 +7,8 @@ function [img_features] = extract_img_features(cfg, pinna_imgs, reg_info)
 %   - pinna_imgs: pinna range image(s) from which the features are
 %                 extracted
 %                 [# pinna images X height resolution X width resolution]
-%   - reg_info: structure of the pinna regions info
+%   - cavity_info: structure of the pinna cavities info
+%
 %
 % OUTPUT
 %   - img_features: extracted image features
@@ -17,7 +18,7 @@ function [img_features] = extract_img_features(cfg, pinna_imgs, reg_info)
     arguments
         cfg
         pinna_imgs (:,:,:) {mustBeNumeric}
-        reg_info {isstruct}
+        cavity_info {isstruct}
     end
 
     if cfg.verbose >= 1
@@ -25,7 +26,7 @@ function [img_features] = extract_img_features(cfg, pinna_imgs, reg_info)
     end
 
     n_pinna_imgs = size(pinna_imgs, 1);
-    n_areas = numel(reg_info.area_range);
+    n_areas = numel(cavity_info(1).area_range);
 
     for n = 1:n_pinna_imgs
         if cfg.verbose >= 2
@@ -39,8 +40,8 @@ function [img_features] = extract_img_features(cfg, pinna_imgs, reg_info)
             
             % Get area
             area_img = squeeze(pinna_imgs(n, ...
-                floor(reg_info.area_range{a}.y_range(n,1)):ceil(reg_info.area_range{a}.y_range(n,2)), ...
-                floor(reg_info.area_range{a}.x_range(n,1)):ceil(reg_info.area_range{a}.x_range(n,2))));
+                floor(cavity_info(n).area_range{a}.y_range(1)):ceil(cavity_info(n).area_range{a}.y_range(2)), ...
+                floor(cavity_info(n).area_range{a}.x_range(1)):ceil(cavity_info(n).area_range{a}.x_range(2))));
 
             % Apply Gabor filter
             gabor_array = gabor(cfg.img_features.gabor.wavelength, ...

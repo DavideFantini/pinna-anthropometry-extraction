@@ -1,4 +1,4 @@
-function [] = plot_results(cfg, pinna_imgs, anthropometry, landmarks, reg_info)
+function [] = plot_results(cfg, pinna_imgs, anthropometry, landmarks, cavity_info)
 % This function plot the features extracted from the pinna images.
 %
 % INPUT
@@ -13,7 +13,7 @@ function [] = plot_results(cfg, pinna_imgs, anthropometry, landmarks, reg_info)
 %                    [# pinna images X # anthropometry]
 %   - landmarks: fitted landmarks with x,y and z coordinates
 %                [# pinna images X # landmarks X 3 coordinates]
-%   - reg_info: structure of the pinna regions info
+%   - cavity_info: structure of the pinna cavities info
 
     n_pinna_imgs = size(pinna_imgs, 1);
 

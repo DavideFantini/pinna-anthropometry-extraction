@@ -1,12 +1,16 @@
-function [anthropometry, anthropometry_units] = measure_pinna_anthropometry(cfg,pinna_imgs,landmarks,reg_info,NameValueArgs)
+function [anthropometry, anthropometry_units] = measure_anthropometry(cfg,pinna_imgs,landmarks,cavity_info,NameValueArgs)
 % This function performs the propor extraction of the anthropometric
 % measurements given the pinna landmarks and images.
 %
 % INPUT
+%   Required
 %   - cfg: configuration structure
 %   - pinna_imgs: images of the pinnae
 %   - landmarks: x and y coordinates of the landmarks of the pinnae
 %                [# pinnae X # landmarks X 2]
+%   - cavity_info: structure of the pinna cavities info
+%
+%   Optional:
 %   - xy_scale: [default=1] scale factor of the x and y coordinates. The 
 %               measurements made in x and y coordinates are multiplied by 
 %               this factor to convert them from pixel units to the unit of  
@@ -15,6 +19,7 @@ function [anthropometry, anthropometry_units] = measure_pinna_anthropometry(cfg,
 %              measurements made in z coordinate are multiplied by this 
 %              factor to convert them from pixel units to the unit of 
 %              measurement of your interest (e.g. cm).
+%
 %
 % OUTPUT
 %   - anthropometry: table with the measured anthropometry. The columns
@@ -28,7 +33,7 @@ function [anthropometry, anthropometry_units] = measure_pinna_anthropometry(cfg,
         cfg {isstruct}
         pinna_imgs (:,:,:) {mustBeNumeric}
         landmarks (:,:,:) {mustBeNumeric}
-        reg_info {isstruct}
+        cavity_info {isstruct}
         NameValueArgs.xy_scale {mustBeScalarOrEmpty} = 1
         NameValueArgs.z_scale {mustBeScalarOrEmpty} = 1
     end
@@ -71,7 +76,7 @@ function [anthropometry, anthropometry_units] = measure_pinna_anthropometry(cfg,
         measurement_landmarks_values = get_measurement_landmarks_values( ...
             cfg, landmark, ...
             cfg.anthropometry.measurement_landmarks_pairs, tragus_pos, ...
-            reg_info(n));
+            cavity_info(n));
 
         for m=1:n_metrics
 
@@ -97,7 +102,7 @@ function [anthropometry, anthropometry_units] = measure_pinna_anthropometry(cfg,
             % ======================================> d11, d12, d13
             elseif ismember(cfg.anthropometry.metrics_name{m}, {'d11', 'd12', 'd13'})
                 measurements_pxl(n,m) = measure_distance_region( ...
-                    reg_info(n), tragus_pos, ...
+                    cavity_info(n), tragus_pos, ...
                     cfg.anthropometry.metrics_name{m});
                 
             % =======================================> distance metrics
@@ -128,17 +133,17 @@ function [anthropometry, anthropometry_units] = measure_pinna_anthropometry(cfg,
           
             % ===========================================> area metric
             elseif startsWith(cfg.anthropometry.metrics_name{m}, 'a')
-                measurements_pxl(n,m) = measure_area(reg_info(n), ...
+                measurements_pxl(n,m) = measure_area(cavity_info(n), ...
                     cfg.anthropometry.metrics_name{m});
 
             % ===========================================> volume metric
             elseif startsWith(cfg.anthropometry.metrics_name{m}, 'v')
-                measurements_pxl(n,m) = measure_volume(reg_info(n), ...
+                measurements_pxl(n,m) = measure_volume(cavity_info(n), ...
                     cfg.anthropometry.metrics_name{m}, xy_scale, z_scale);
 
             % ===========================================> depth metric
             elseif startsWith(cfg.anthropometry.metrics_name{m}, 'h')
-                measurements_pxl(n,m) = measure_depth(reg_info(n), ...
+                measurements_pxl(n,m) = measure_depth(cavity_info(n), ...
                     cfg.anthropometry.metrics_name{m});
                 
             end

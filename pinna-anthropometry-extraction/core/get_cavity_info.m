@@ -1,4 +1,4 @@
-function [reg_info] = get_regions_info(cfg, pinna_imgs, landmarks)
+function [cavity_info] = get_cavity_info(cfg, pinna_imgs, landmarks)
 % This function returns the info needed to measure the area metrics
 %
 % INPUT
@@ -6,8 +6,12 @@ function [reg_info] = get_regions_info(cfg, pinna_imgs, landmarks)
 %   - pinna_imgs: images of the pinnae
 %   - landmarks: x and y coordinates of the landmarks of the pinnae
 %                [# pinnae X # landmarks X 2]
+%
+%
+% OUTPUT
+%   - cavity_info: structure of the pinna cavities info
 
-    % ============================ ARGUMENTS ============================ %
+
     arguments
         cfg {isstruct}
         pinna_imgs (:,:,:) {mustBeNumeric}
@@ -27,7 +31,7 @@ function [reg_info] = get_regions_info(cfg, pinna_imgs, landmarks)
     % Initialize area landmarks cell array (3 area)
     n_areas = 3;
 
-    reg_info(n_pinnae) = struct();
+    cavity_info(n_pinnae) = struct();
 
     for n = 1:n_pinnae
 
@@ -38,15 +42,15 @@ function [reg_info] = get_regions_info(cfg, pinna_imgs, landmarks)
         landmark = squeeze(landmarks(n,:,:));
 
         area_lnd = cell(n_areas,1);
-        reg_info(n).area_shape = cell(n_areas,1);
-        reg_info(n).volume_lnd = cell(n_areas,1);
-        reg_info(n).area_centroid = cell(n_areas,1);
+        cavity_info(n).area_shape = cell(n_areas,1);
+        cavity_info(n).volume_lnd = cell(n_areas,1);
+        cavity_info(n).area_centroid = cell(n_areas,1);
     
         % Initialize area coordinates
         a = struct;
         a.x_range = zeros(1, 2);
         a.y_range = zeros(1, 2);
-        reg_info(n).area_range = {a, a, a};
+        cavity_info(n).area_range = {a, a, a};
     
         % Get the concha landmarks
         concha_lnd = landmark(cfg.landmarks.pinna_parts_idx{2}, :);
@@ -106,16 +110,16 @@ function [reg_info] = get_regions_info(cfg, pinna_imgs, landmarks)
     
         % Compute area
         area_lnd{1} = concha_lnd(1:concha_stop_idx,:);
-        reg_info(n).area_shape{1} = polyshape(area_lnd{1});
+        cavity_info(n).area_shape{1} = polyshape(area_lnd{1});
     
-        reg_info(n).area_range{1}.x_range = [min(area_lnd{1}(:,1)), ...
+        cavity_info(n).area_range{1}.x_range = [min(area_lnd{1}(:,1)), ...
             max(area_lnd{1}(:,1))];
-        reg_info(n).area_range{1}.y_range = [min(area_lnd{1}(:,2)), ...
+        cavity_info(n).area_range{1}.y_range = [min(area_lnd{1}(:,2)), ...
             max(area_lnd{1}(:,2))];
 
         % Get centroid
-        [cx, cy] = centroid(reg_info(n).area_shape{1});
-        reg_info(n).area_centroid{1} = [cx, cy];
+        [cx, cy] = centroid(cavity_info(n).area_shape{1});
+        cavity_info(n).area_centroid{1} = [cx, cy];
     
     
         % AREA 2 - CYMBA
@@ -132,16 +136,16 @@ function [reg_info] = get_regions_info(cfg, pinna_imgs, landmarks)
     
          % Compute area
         area_lnd{2} = a2_landmarks;
-        reg_info(n).area_shape{2} = polyshape(area_lnd{2});
+        cavity_info(n).area_shape{2} = polyshape(area_lnd{2});
     
-        reg_info(n).area_range{2}.x_range = [min(area_lnd{2}(:,1)), ...
+        cavity_info(n).area_range{2}.x_range = [min(area_lnd{2}(:,1)), ...
             max(area_lnd{2}(:,1))];
-        reg_info(n).area_range{2}.y_range = [min(area_lnd{2}(:,2)), ...
+        cavity_info(n).area_range{2}.y_range = [min(area_lnd{2}(:,2)), ...
             max(area_lnd{2}(:,2))];
     
         % Get centroid
-        [cx, cy] = centroid(reg_info(n).area_shape{2});
-        reg_info(n).area_centroid{2} = [cx, cy];
+        [cx, cy] = centroid(cavity_info(n).area_shape{2});
+        cavity_info(n).area_centroid{2} = [cx, cy];
     
         % AREA 3 - FOSSA TRIANGULARIS
         % Get the stop index of the helix/fossa
@@ -162,14 +166,16 @@ function [reg_info] = get_regions_info(cfg, pinna_imgs, landmarks)
     
         % Compute area
         area_lnd{3} = fossa_triang_lnd;
-        reg_info(n).area_shape{3} = polyshape(area_lnd{3});
+        cavity_info(n).area_shape{3} = polyshape(area_lnd{3});
     
-        reg_info(n).area_range{3}.x_range = [min(area_lnd{3}(:,1)), max(area_lnd{3}(:,1))];
-        reg_info(n).area_range{3}.y_range = [min(area_lnd{3}(:,2)), max(area_lnd{3}(:,2))];
+        cavity_info(n).area_range{3}.x_range = [min(area_lnd{3}(:,1)), 
+            max(area_lnd{3}(:,1))];
+        cavity_info(n).area_range{3}.y_range = [min(area_lnd{3}(:,2)), 
+            max(area_lnd{3}(:,2))];
     
         % Get centroid
-        [cx, cy] = centroid(reg_info(n).area_shape{3});
-        reg_info(n).area_centroid{3} = [cx, cy];
+        [cx, cy] = centroid(cavity_info(n).area_shape{3});
+        cavity_info(n).area_centroid{3} = [cx, cy];
 
     
         % VOLUMES
@@ -187,7 +193,7 @@ function [reg_info] = get_regions_info(cfg, pinna_imgs, landmarks)
             x = x(:);
             y = y(:);
             in_area_pt = [x, y];
-            in_area_pt = in_area_pt(isinterior(reg_info(n).area_shape{a_idx}, ...
+            in_area_pt = in_area_pt(isinterior(cavity_info(n).area_shape{a_idx}, ...
                 in_area_pt(:,1), in_area_pt(:,2)), :);
         
             % Add all the point together
@@ -196,7 +202,7 @@ function [reg_info] = get_regions_info(cfg, pinna_imgs, landmarks)
             % Get 3D landmarks
             lnd(:,3) = get_image_z(pinna_img, lnd(:,1)', lnd(:,2)');
             
-            reg_info(n).volume_lnd{a_idx} = lnd;
+            cavity_info(n).volume_lnd{a_idx} = lnd;
     
         end
     end

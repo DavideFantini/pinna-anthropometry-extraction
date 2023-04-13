@@ -6,11 +6,11 @@ function [z] = get_image_z(imgs, x, y)
 %   - imgs: range images [# pinnae X height resolution X width resolution]
 %           If a 2D matrix is received, then it is considered as a single
 %           image.
-%   - x: x coordinates [1 X # points]
-%   - y: y coordinates [1 X # points]
+%   - x: x coordinates [# pinnae X # points]
+%   - y: y coordinates [# pinnae X # points]
 %
 % OUTPUT
-%   - z: z coordinates [1 X # points]
+%   - z: z coordinates [# pinnae X # points]
 
     if ismatrix(imgs)
         imgs = permute(imgs, [3 1 2]);
@@ -26,8 +26,8 @@ function [z] = get_image_z(imgs, x, y)
 
     for n = 1:n_img
         img = squeeze(imgs(n,:,:));
-        lin_idx = sub2ind(size(img), max(min(round(y), size(img, 1) - 1), 1), ...
-            max(min(round(x), size(img, 2) - 1), 1));
+        lin_idx = sub2ind(size(img), max(min(round(y(n,:)), size(img, 1) - 1), 1), ...
+            max(min(round(x(n,:)), size(img, 2) - 1), 1));
         z(n,:) = img(lin_idx);
     end
 
