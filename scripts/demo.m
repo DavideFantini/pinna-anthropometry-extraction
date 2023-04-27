@@ -6,9 +6,8 @@ cfg = get_cfg();
 
 % Load pinna range image
 path_pinna_img = '../pinna_img_demo.mat';
-% load(path_pinna_img, 'pinna_img');
-% 
-% pinna_img = cat(1, pinna_img, pinna_img);
+load(path_pinna_img, 'pinna_img');
+
 
 % Set estimated xy and z scales to cm conversion for the demo pinna image
 % Set to 1 to get the measurements in pixels

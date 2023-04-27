@@ -296,40 +296,59 @@ function [tragus_pos, helix_pos] = get_pinna_characteristic_points(cfg, ...
         cfg.anthropometry.tragus_landmarks_idx,2));
 
 
-    % Get the horizontal section of the range images along the y
-    % coordinate of the initial tragus position
-    landmarks_xrange = (max(landmarks(:,2), [], 'all') - ...
-        min(landmarks(:,2), [], 'all'));
-    ear_section_margin = round(landmarks_xrange * ear_section_margin_perc);
+%     % Get the horizontal section of the range images along the y
+%     % coordinate of the initial tragus position
+%     landmarks_xrange = (max(landmarks(:,2), [], 'all') - ...
+%         min(landmarks(:,2), [], 'all'));
+%     ear_section_margin = round(landmarks_xrange * ear_section_margin_perc);
+%     ear_section = pinna_img(init_tragus_pos.y - ear_section_margin: ...
+%         init_tragus_pos.y + ear_section_margin,:);
+
+%     % Get the prominence values of the ear section aroung the initial
+%     % tragus position
+%     area_around_tragus = ear_section(:, ...
+%         init_tragus_pos.x - ear_section_margin:init_tragus_pos.x + ...
+%         ear_section_margin);
+%     [~,prominence] = islocalmax(area_around_tragus, 2);
+% 
+%     % Select the tragus point as the maximum value in the area around the
+%     % tragus with added the scaled prominence and a 2D gaussian to
+%     % discourage the farthest points
+%     porminence_scaled = (prominence ./ max(prominence,[],'all').* ...
+%         max(area_around_tragus,[],'all').*0.05);
+%     area_around_tragus_prom = porminence_scaled + area_around_tragus;
+%     area_g = gaussian2D([size(prominence, 1)/2, size(prominence, 2)/2], ...
+%         size(prominence,1)*10,size(prominence,1),size(prominence,2));
+%     area_around_tragus_prom = area_around_tragus_prom .* area_g;
+%     [~, tragus_pos] = max(area_around_tragus_prom, [], 'all','linear');
+% 
+%     % Get the x y coordinates from linear index
+%     [tragus_pos_y, tragus_pos_x] = ind2sub(size(ear_section(:, ...
+%         1:init_tragus_pos.x)), tragus_pos);
+% 
+%     % Get the tragus position related to the original image
+%     tragus_pos = struct;
+%     tragus_pos.y = init_tragus_pos.y - ear_section_margin + tragus_pos_y;
+%     tragus_pos.x = init_tragus_pos.x - ear_section_margin + tragus_pos_x;
+
+    ear_section_margin = round((max(landmarks(:,2), [], 'all') - ...
+        min(landmarks(:,2), [], 'all')) * ear_section_margin_perc);
     ear_section = pinna_img(init_tragus_pos.y - ear_section_margin: ...
         init_tragus_pos.y + ear_section_margin,:);
-
-    % Get the prominence values of the ear section aroung the initial
-    % tragus position
-    area_around_tragus = ear_section(:, ...
-        init_tragus_pos.x - ear_section_margin:init_tragus_pos.x + ...
-        ear_section_margin);
-    [~,prominence] = islocalmax(area_around_tragus, 2);
-
-    % Select the tragus point as the maximum value in the area around the
-    % tragus with added the scaled prominence and a 2D gaussian to
-    % discourage the farthest points
-    porminence_scaled = (prominence ./ max(prominence,[],'all').* ...
-        max(area_around_tragus,[],'all').*0.05);
-    area_around_tragus_prom = porminence_scaled + area_around_tragus;
-    area_g = gaussian2D([size(prominence, 1)/2, size(prominence, 2)/2], ...
-        size(prominence,1)*10,size(prominence,1),size(prominence,2));
-    area_around_tragus_prom = area_around_tragus_prom .* area_g;
-    [~, tragus_pos] = max(area_around_tragus_prom, [], 'all','linear');
-
+    % Get the prominence values of the ear section excluding what is at right of the ear canal
+    [~, prominence] = islocalmax(ear_section(:,1:init_tragus_pos.x),2);
+    % Select the tragus point as the maximum value using a multiplication factor to promince that increase linearly as approaching the ear canal
+    [~, tragus_pos] = max(prominence .* repmat(1:size(prominence, 2), ...
+        size(prominence, 1), 1), [], 'all', 'linear');
     % Get the x y coordinates from linear index
     [tragus_pos_y, tragus_pos_x] = ind2sub(size(ear_section(:, ...
         1:init_tragus_pos.x)), tragus_pos);
 
     % Get the tragus position related to the original image
     tragus_pos = struct;
-    tragus_pos.y = init_tragus_pos.y - ear_section_margin + tragus_pos_y;
-    tragus_pos.x = init_tragus_pos.x - ear_section_margin + tragus_pos_x;
+    tragus_pos.x = tragus_pos_x;
+    tragus_pos.y = init_tragus_pos.x - ear_section_margin + tragus_pos_y;
+
 
 
     % Get the horizontal section in corrispondence of the y tragus position
@@ -364,7 +383,7 @@ function [d5] = measure_d5(landmark_xy)
 end
 
 
-function [d6] = measure_d6(landmark_xy)
+function [d6] = measure_d6(landmark_xy, tragus_pos)
 
     d6 = max(landmark_xy(:,1)) - min(landmark_xy(:,1));
 
