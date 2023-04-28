@@ -432,17 +432,12 @@ function [d9] = measure_d9(pinna_img, tragus_pos, helix_pos, xy_scale, z_scale)
     % Get ear y section in tragus y position
     ear_section_1 = pinna_img(tragus_pos.y, :);
 
-    % Compute differences ith adjacent points
-    ear_section_1_d1 = diff(ear_section_1,1);
+    % Compute differences with adjacent points
+    ear_section_1_d2 = diff(ear_section_1,2);
 
-    % Find the 1st minima next to the tragus y position
-    [~,prom_min_pos] = islocalmin(ear_section_1_d1( ...
-        tragus_pos.x:min(helix_pos.x-1,size(ear_section_1_d1,2))));
-    min_pos = find(prom_min_pos, 1);
-    min_pos = min_pos + tragus_pos.x;
-    d9_meas_point = find(ear_section_1_d1(min_pos+1:min(helix_pos.x, ...
-        size(ear_section_1_d1,2))) > ...
-        prctile((ear_section_1_d1(ear_section_1_d1>0)),25),1) + min_pos;
+    [~,d9_meas_point] = max(ear_section_1_d2( ...
+        tragus_pos.x+1:min(helix_pos.x,size(ear_section_1_d2,2))));
+    d9_meas_point = d9_meas_point + tragus_pos.x;
 
 
     d9 = pdist2([tragus_pos.x * xy_scale, ...
