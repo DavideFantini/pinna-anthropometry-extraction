@@ -448,12 +448,14 @@ end
 
 function [t1] = measure_t1(landmark_xy)
 
-    % Compute the PCA of the landmarks for n
-    landmarks_coeff = pca(landmark_xy);
+    % Find top and bottom landmarks
+    [~,top_lnd_idx] = max(landmark_xy(:,2));
+    [~,bottom_lnd_idx] = min(landmark_xy(:,2));
+    top_lnd = landmark_xy(top_lnd_idx,:);
+    bottom_lnd = landmark_xy(bottom_lnd_idx,:);
 
-    angle = atan2(landmarks_coeff(2,:), landmarks_coeff(1,:));
-
-    t1 = rad2deg(-angle(2));
+    % Compute the angle between the top and bottom landmarks
+    t1 = 90 - angle_between_points(bottom_lnd, top_lnd, 'deg');
 
 end
 
@@ -495,7 +497,7 @@ function [r] = measure_angle(measurement_landmarks_values, metric_name)
     p2 = measurement_landmarks_values.(d_metric)(2,:);
 
     % Measure the distance
-    r = angle_between_points(p1, p2, 'deg');
+    r = 90 - angle_between_points(p1, p2, 'deg');
     
 end
 
