@@ -52,7 +52,7 @@ function [anthropometry, anthropometry_units] = measure_anthropometry(cfg,pinna_
     n_pinna_imgs = size(pinna_imgs,1);
 
     % Initialize the measurements martrix
-    measurements_pxl = zeros(n_pinna_imgs,n_metrics);
+    anthropometry = zeros(n_pinna_imgs,n_metrics);
 
     
     % ======================= COMPUTE MEASURMENTS ======================= %
@@ -82,97 +82,76 @@ function [anthropometry, anthropometry_units] = measure_anthropometry(cfg,pinna_
 
             % ======================================> d6
             if strcmp(cfg.anthropometry.metrics_name{m},'d6')
-                measurements_pxl(n,m) = measure_d6(landmark);
+                anthropometry(n,m) = measure_d6(landmark, xy_scale);
 
             % ======================================> d5
             elseif strcmp(cfg.anthropometry.metrics_name{m},'d5')
-                measurements_pxl(n,m) = measure_d5(landmark);
+                anthropometry(n,m) = measure_d5(landmark, xy_scale);
 
             % ======================================> d8
             elseif strcmp(cfg.anthropometry.metrics_name{m},'d8')       
-                measurements_pxl(n,m) = measure_d8(pinna_img, ...
+                anthropometry(n,m) = measure_d8(pinna_img, ...
                     landmark, tragus_pos, measurement_landmarks_values, ...
                     xy_scale, z_scale);
 
             % ======================================> d9
             elseif strcmp(cfg.anthropometry.metrics_name{m},'d9')
-                measurements_pxl(n,m) = measure_d9(pinna_img, ...
+                anthropometry(n,m) = measure_d9(pinna_img, ...
                     tragus_pos, helix_pos, xy_scale, z_scale);
 
             % ======================================> d11, d12, d13
             elseif ismember(cfg.anthropometry.metrics_name{m}, {'d11', 'd12', 'd13'})
-                measurements_pxl(n,m) = measure_distance_region( ...
+                anthropometry(n,m) = measure_centroid_distance( ...
                     cavity_info(n), tragus_pos, ...
-                    cfg.anthropometry.metrics_name{m});
+                    cfg.anthropometry.metrics_name{m}, xy_scale);
                 
             % =======================================> distance metrics
             elseif startsWith(cfg.anthropometry.metrics_name{m}, 'd')
-                measurements_pxl(n,m) = measure_distance( ...
+                anthropometry(n,m) = measure_distance( ...
                     measurement_landmarks_values, ...
-                    cfg.anthropometry.metrics_name{m});
+                    cfg.anthropometry.metrics_name{m}, xy_scale);
 
             % ======================================> t1
             elseif strcmp(cfg.anthropometry.metrics_name{m},'t1')
-                measurements_pxl(n,m) = measure_t1(landmark);
+                anthropometry(n,m) = measure_t1(landmark);
 
             % ======================================> t2
             elseif strcmp(cfg.anthropometry.metrics_name{m},'t2')
-                measurements_pxl(n,m) = measure_t2(tragus_pos, helix_pos, ...
+                anthropometry(n,m) = measure_t2(tragus_pos, helix_pos, ...
                     xy_scale, z_scale);
                 
             % ======================================> t3
             elseif strcmp(cfg.anthropometry.metrics_name{m},'t3')
-                measurements_pxl(n,m) = measure_t3(cfg, pinna_img, ...
+                anthropometry(n,m) = measure_t3(cfg, pinna_img, ...
                     landmark, tragus_pos, xy_scale, z_scale);
 
             % ===========================================> angle metric
             elseif startsWith(cfg.anthropometry.metrics_name{m}, 'r')
-                measurements_pxl(n,m) = measure_angle( ...
+                anthropometry(n,m) = measure_angle( ...
                     measurement_landmarks_values, ...
                     cfg.anthropometry.metrics_name{m});
           
             % ===========================================> area metric
             elseif startsWith(cfg.anthropometry.metrics_name{m}, 'a')
-                measurements_pxl(n,m) = measure_area(cavity_info(n), ...
-                    cfg.anthropometry.metrics_name{m});
+                anthropometry(n,m) = measure_area(cavity_info(n), ...
+                    cfg.anthropometry.metrics_name{m}, xy_scale);
 
             % ===========================================> volume metric
             elseif startsWith(cfg.anthropometry.metrics_name{m}, 'v')
-                measurements_pxl(n,m) = measure_volume(cavity_info(n), ...
+                anthropometry(n,m) = measure_volume(cavity_info(n), ...
                     cfg.anthropometry.metrics_name{m}, xy_scale, z_scale);
 
             % ===========================================> depth metric
             elseif startsWith(cfg.anthropometry.metrics_name{m}, 'h')
-                measurements_pxl(n,m) = measure_depth(cavity_info(n), ...
-                    cfg.anthropometry.metrics_name{m});
+                anthropometry(n,m) = measure_depth(cavity_info(n), ...
+                    cfg.anthropometry.metrics_name{m}, z_scale);
                 
             end
         end
     end
 
 
-    % ========================= SCALE CONVERSION ======================== %
-    anthropometry = measurements_pxl;
-
-    if xy_scale ~= 1
-        % Convert in the desired scale
-        metrics_to_scale_xy = cellfun(@(x) ...
-            (startsWith(x, 'd') && x(2) ~= '8'  && x(2) ~= '9') || ...
-            (startsWith(x, 'a')), cfg.anthropometry.metrics_name);
-
-        anthropometry(:,metrics_to_scale_xy) = measurements_pxl(:, ...
-            metrics_to_scale_xy) .* xy_scale;
-
-    end
-
-    if z_scale ~= 1
-        metrics_to_scale_z = cellfun(@(x) startsWith(x, 'h'), ...
-            cfg.anthropometry.metrics_name);
-    
-        anthropometry(:,metrics_to_scale_z) = measurements_pxl(:, ...
-            metrics_to_scale_z) .* z_scale;
-    end
-
+    % ======================== UNIT OF MEASUREMENT ====================== %
     anthropometry = array2table(anthropometry, ...
         'VariableNames', cfg.anthropometry.metrics_name);
 
@@ -295,42 +274,6 @@ function [tragus_pos, helix_pos] = get_pinna_characteristic_points(cfg, ...
     init_tragus_pos.y = round(landmarks( ...
         cfg.anthropometry.tragus_landmarks_idx,2));
 
-
-%     % Get the horizontal section of the range images along the y
-%     % coordinate of the initial tragus position
-%     landmarks_xrange = (max(landmarks(:,2), [], 'all') - ...
-%         min(landmarks(:,2), [], 'all'));
-%     ear_section_margin = round(landmarks_xrange * ear_section_margin_perc);
-%     ear_section = pinna_img(init_tragus_pos.y - ear_section_margin: ...
-%         init_tragus_pos.y + ear_section_margin,:);
-
-%     % Get the prominence values of the ear section aroung the initial
-%     % tragus position
-%     area_around_tragus = ear_section(:, ...
-%         init_tragus_pos.x - ear_section_margin:init_tragus_pos.x + ...
-%         ear_section_margin);
-%     [~,prominence] = islocalmax(area_around_tragus, 2);
-% 
-%     % Select the tragus point as the maximum value in the area around the
-%     % tragus with added the scaled prominence and a 2D gaussian to
-%     % discourage the farthest points
-%     porminence_scaled = (prominence ./ max(prominence,[],'all').* ...
-%         max(area_around_tragus,[],'all').*0.05);
-%     area_around_tragus_prom = porminence_scaled + area_around_tragus;
-%     area_g = gaussian2D([size(prominence, 1)/2, size(prominence, 2)/2], ...
-%         size(prominence,1)*10,size(prominence,1),size(prominence,2));
-%     area_around_tragus_prom = area_around_tragus_prom .* area_g;
-%     [~, tragus_pos] = max(area_around_tragus_prom, [], 'all','linear');
-% 
-%     % Get the x y coordinates from linear index
-%     [tragus_pos_y, tragus_pos_x] = ind2sub(size(ear_section(:, ...
-%         1:init_tragus_pos.x)), tragus_pos);
-% 
-%     % Get the tragus position related to the original image
-%     tragus_pos = struct;
-%     tragus_pos.y = init_tragus_pos.y - ear_section_margin + tragus_pos_y;
-%     tragus_pos.x = init_tragus_pos.x - ear_section_margin + tragus_pos_x;
-
     ear_section_margin = round((max(landmarks(:,2), [], 'all') - ...
         min(landmarks(:,2), [], 'all')) * ear_section_margin_perc);
     ear_section = pinna_img(init_tragus_pos.y - ear_section_margin: ...
@@ -366,26 +309,26 @@ end
 
 
 
-function [d] = measure_distance(measurement_landmarks_values, metric_name)
+function [d] = measure_distance(measurement_landmarks_values, metric_name, xy_scale)
     p1 = measurement_landmarks_values.(metric_name)(1,:);
     p2 = measurement_landmarks_values.(metric_name)(2,:);
 
     % Measure the distance
-    d = pdist2(p1, p2);
+    d = pdist2(p1, p2) .* xy_scale;
     
 end
 
 
-function [d5] = measure_d5(landmark_xy)
+function [d5] = measure_d5(landmark_xy, xy_scale)
 
-    d5 = max(landmark_xy(:,2)) - min(landmark_xy(:,2));
+    d5 = (max(landmark_xy(:,2)) - min(landmark_xy(:,2))) .* xy_scale;
 
 end
 
 
-function [d6] = measure_d6(landmark_xy, tragus_pos)
+function [d6] = measure_d6(landmark_xy, xy_scale)
 
-    d6 = max(landmark_xy(:,1)) - min(landmark_xy(:,1));
+    d6 = (max(landmark_xy(:,1)) - min(landmark_xy(:,1))) .* xy_scale;
 
 end
 
@@ -441,7 +384,7 @@ function [d9] = measure_d9(pinna_img, tragus_pos, helix_pos, xy_scale, z_scale)
 
 
     d9 = pdist2([tragus_pos.x * xy_scale, ...
-        tragus_pos.x * z_scale],...
+        tragus_pos.z * z_scale],...
         [d9_meas_point * xy_scale, z_scale * ear_section_1(d9_meas_point)]);
 end
 
@@ -501,7 +444,7 @@ function [r] = measure_angle(measurement_landmarks_values, metric_name)
     
 end
 
-function [d_r] = measure_distance_region(reg_info, tragus_pos, metric_name)
+function [d_r] = measure_centroid_distance(reg_info, tragus_pos, metric_name, xy_scale)
 
     a_idx = str2double(metric_name(3:end));
     a_shape = reg_info.area_shape{a_idx};
@@ -513,13 +456,14 @@ function [d_r] = measure_distance_region(reg_info, tragus_pos, metric_name)
     p2 = [c_x, c_y];
 
     % Compute distance between tragus and centroid
-    d_r = pdist2(p1, p2);
+    d_r = pdist2(p1, p2) .* xy_scale;
 
 end
 
-function [a] = measure_area(reg_info, metric_name)
+function [a] = measure_area(reg_info, metric_name, xy_scale)
 
-    a = area(reg_info.area_shape{str2double(metric_name(2:end))});
+    a = area(reg_info.area_shape{str2double(metric_name(2:end))}) * ...
+        (xy_scale ^ 2);
 
 end
 
@@ -536,12 +480,12 @@ function [v] = measure_volume(reg_info, metric_name, xy_scale, z_scale)
 end
 
 
-function [h] = measure_depth(reg_info, metric_name)
+function [h] = measure_depth(reg_info, metric_name, z_scale)
 
     lnd = reg_info.volume_lnd{str2double(metric_name(2:end))};
 
     % Compute depth
-    h = max(lnd(:,3)) - min(lnd(:,3));
+    h = (max(lnd(:,3)) - min(lnd(:,3))) * z_scale;
 
 end
 
