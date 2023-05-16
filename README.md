@@ -8,6 +8,9 @@ The ASM algorithm has been implemented with:
 
 > John W. Miller (2023). Face detection with Active Shape Models (ASMs) (https://github.com/johnwmillr/ActiveShapeModels), GitHub. Retrieved April 13, 2023.
 
+Some modifications have been performed to make the code compliant with our needs (no change has been made to the core of the ASM algorithm).
+
+---
 Tested with Matlab R2022b.
 
 ## Repository structure
