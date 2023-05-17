@@ -8,14 +8,6 @@ cfg = get_cfg();
 path_pinna_img = '../pinna_img_demo.mat';
 load(path_pinna_img, 'pinna_img');
 
-
-% load('..\..\Code\data\landmarks_fitting_HUTUBS.mat', 'fitted_landmarks');%'fitted_landmarks',
-% fitted_landmarks = permute(fitted_landmarks, [3, 1, 2]);
-% fitted_landmarks = fitted_landmarks(:,:,1:2);
-% load('..\..\Code\ear_img\HUTUBS_range_img.mat' , 'ear_img');
-% ear_img = permute(ear_img, [3, 1, 2]);
-
-
 % Set estimated xy and z scales to cm conversion for the demo pinna image
 % Set to 1 to get the measurements in pixels
 xy_scale = 0.05;

@@ -31,7 +31,7 @@ function [anthropometry,landmarks,img_features] = get_pinna_features(cfg,pinna_i
 %   - z_scale: scale factor of the z coordinate. The measurements made in z
 %              coordinate are multiplied by this factor to convert them
 %              from pixel units to the unit of measurement of your interest
-%              (e.g. cm). If xy_scale is provided you must provide z_scale,
+%              (e.g. cm). If z_scale is provided you must provide xy_scale,
 %              too.
 %   - right_pinna: whether in the provided images are represented right
 %                  pinnae. It is a boolean array with one element for each 
