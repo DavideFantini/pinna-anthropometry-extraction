@@ -97,7 +97,7 @@ function [anthropometry, anthropometry_units] = measure_anthropometry(cfg,pinna_
             % ======================================> d9
             elseif strcmp(cfg.anthropometry.metrics_name{m},'d9')
                 anthropometry(n,m) = measure_d9(pinna_img, ...
-                    tragus_pos, helix_pos, xy_scale, z_scale);
+                    tragus_pos, xy_scale, z_scale);
 
             % ======================================> d11, d12, d13
             elseif ismember(cfg.anthropometry.metrics_name{m}, {'d11', 'd12', 'd13'})
@@ -263,39 +263,41 @@ function [tragus_pos, helix_pos] = get_pinna_characteristic_points(cfg, ...
         landmarks (:,:) {mustBeNumeric}
     end
 
-    % Percentage of the x landmarks' range used to outline a square section
+    % Percentage of the landmarks' range used to outline a square section
     % to find the tragus
-    ear_section_margin_perc = 0.15;
+    tragus_section_margin_perc_y = 0.09;
+    tragus_section_margin_perc_x = 0.05;
 
     % The position of a specific landmark is used as initial estimated of
-    % the tragus position. Then, the tragus position is estimated.
+    % the tragus position. Then, the tragus position is estimated in a area
+    % around the initial position.
     init_tragus_pos.x = round(landmarks( ...
         cfg.anthropometry.tragus_landmarks_idx,1));
     init_tragus_pos.y = round(landmarks( ...
         cfg.anthropometry.tragus_landmarks_idx,2));
 
-    ear_section_margin = round((max(landmarks(:,2), [], 'all') - ...
-        min(landmarks(:,2), [], 'all')) * ear_section_margin_perc);
-    ear_section = pinna_img(init_tragus_pos.y - ear_section_margin: ...
-        init_tragus_pos.y + ear_section_margin,:);
-    % Get the prominence values of the ear section excluding what is at right of the ear canal
-    [~, prominence] = islocalmax(ear_section(:,1:init_tragus_pos.x),2);
-    % Select the tragus point as the maximum value using a multiplication factor to promince that increase linearly as approaching the ear canal
-    [~, tragus_pos] = max(prominence .* repmat(1:size(prominence, 2), ...
-        size(prominence, 1), 1), [], 'all', 'linear');
+    tragus_section_margin_y = round((max(landmarks(:,2), [], 'all') - ...
+        min(landmarks(:,2), [], 'all')) * tragus_section_margin_perc_y);
+    tragus_section_margin_x = round((max(landmarks(:,1), [], 'all') - ...
+        min(landmarks(:,1), [], 'all')) * tragus_section_margin_perc_x);
+
+    tragus_section = pinna_img(init_tragus_pos.y - tragus_section_margin_y: ...
+        init_tragus_pos.y + tragus_section_margin_y, ...
+        init_tragus_pos.x - tragus_section_margin_x: ...
+        init_tragus_pos.x + round(tragus_section_margin_x/2));
+
+    % Estimate the tragus position as the max point in z coordinate
+    [~, tragus_pos]=max(tragus_section, [], 'all', 'linear');
     % Get the x y coordinates from linear index
-    [tragus_pos_y, tragus_pos_x] = ind2sub(size(ear_section(:, ...
-        1:init_tragus_pos.x)), tragus_pos);
+    [tragus_pos_y, tragus_pos_x] = ind2sub(size(tragus_section), tragus_pos);
 
     % Get the tragus position related to the original image
     tragus_pos = struct;
-    tragus_pos.x = tragus_pos_x;
-    tragus_pos.y = init_tragus_pos.x - ear_section_margin + tragus_pos_y;
-
-
+    tragus_pos.x = init_tragus_pos.x - tragus_section_margin_x + tragus_pos_x - 1;
+    tragus_pos.y = init_tragus_pos.y - tragus_section_margin_y + tragus_pos_y;
 
     % Get the horizontal section in corrispondence of the y tragus position
-    ear_section_1 = pinna_img(tragus_pos.y,:);
+    ear_section_1 = pinna_img(tragus_pos.y, :);
 
     % Get the tragus z value
     tragus_pos.z = ear_section_1(tragus_pos.x);
@@ -338,51 +340,55 @@ function [d8] = measure_d8(pinna_img, landmark_xy, tragus_pos, ...
                 
     % Extract rectaungular region with the tragus and the intertragal notch
     % as vertices
-    mrg = round((max(landmark_xy(:,1)) - min(landmark_xy(:,1)) ) * 0.025);
-    d1_end_y = min(round(measurement_landmarks_values.d1(2,2)), ...
-        tragus_pos.y - 1);
-    d1_end_x = round(measurement_landmarks_values.d1(2,1));
-    if d1_end_x < tragus_pos.x
-        start_x = d1_end_x-mrg;
-        end_x = tragus_pos.x+mrg;
+    mrg_perc = 0.03;
+    mrg = round((max(landmark_xy(:,1)) - min(landmark_xy(:,1)) ) * mrg_perc);
 
-    else
-        start_x = tragus_pos.x - mrg;
-        end_x = d1_end_x + mrg;
+    % Get d1 inferior measurement point
+    d1_y = round(measurement_landmarks_values.d1(2,2));
+    d1_x = round(measurement_landmarks_values.d1(2,1));
 
-    end
-    section = pinna_img(d1_end_y-mrg:tragus_pos.y+mrg, start_x:end_x);
-    
-    % Find the most prominent minima
-    [~,section_prominence]=islocalmin(section,1);
-    [~, d8_meas_point] = max(section_prominence, [], 'all', 'linear');
+    % Outline the section around d1 inferior measurement point
+    section = pinna_img(d1_y - mrg:d1_y + mrg , d1_x - mrg:d1_x + mrg);
+    [~, d8_meas_point] = min(section, [], 'all', 'linear');
 
     [d8_meas_point_yrow, d8_meas_point_xcol] = ind2sub(size(section), ...
         d8_meas_point);
     
-    d8_meas_point_yrow = d1_end_y - mrg + d8_meas_point_yrow;
-    d8_meas_point_xcol = start_x + d8_meas_point_xcol;
-    
-    
-    d8 = pdist2([tragus_pos.y*xy_scale, tragus_pos.x*xy_scale, ...
+    d8_meas_point_yrow = d1_y - mrg + d8_meas_point_yrow;
+    d8_meas_point_xcol = d1_x - mrg + d8_meas_point_xcol;
+
+    % Compute measurement
+    d8 = pdist2([tragus_pos.y * xy_scale, tragus_pos.x * xy_scale, ...
         tragus_pos.z * z_scale], ...
-        [d8_meas_point_yrow*xy_scale, d8_meas_point_xcol*xy_scale, ...
-        z_scale*(pinna_img(d8_meas_point_yrow,d8_meas_point_xcol))]);
+        [d8_meas_point_yrow * xy_scale, d8_meas_point_xcol * xy_scale, ...
+        z_scale * (pinna_img(d8_meas_point_yrow, d8_meas_point_xcol))]);
 end
 
 
-function [d9] = measure_d9(pinna_img, tragus_pos, helix_pos, xy_scale, z_scale)
+function [d9] = measure_d9(pinna_img, tragus_pos, xy_scale, z_scale)
     % Get ear y section in tragus y position
     ear_section_1 = pinna_img(tragus_pos.y, :);
 
-    % Compute differences with adjacent points
-    ear_section_1_d2 = diff(ear_section_1,2);
+    % Outline the section of the concha between the tragus and the helix
+    init_margin = 5;
+    ear_sect_sup_tragus = ear_section_1 > ear_section_1(tragus_pos.x);
+    ear_sect_sup_tragus = ear_sect_sup_tragus(tragus_pos.x:end);
+    ear_sect_sup_tragus(1:init_margin) = 0;
+    end_concha_idx = find(ear_sect_sup_tragus, 1) + tragus_pos.x - 2;
 
-    [~,d9_meas_point] = max(ear_section_1_d2( ...
-        tragus_pos.x+1:min(helix_pos.x,size(ear_section_1_d2,2))));
-    d9_meas_point = d9_meas_point + tragus_pos.x;
+    concha_section = ear_section_1(tragus_pos.x + init_margin:end_concha_idx);
 
-
+    % Compute the different between adjacent elements
+    concha_section_diff = diff(concha_section, 1);
+    % Find the local max
+    [~, prom_concha] = islocalmax(concha_section_diff);
+    if all(prom_concha==0)
+        d9_meas_point = numel(concha_section) - 1;
+    else
+        [~, d9_meas_point] = max(prom_concha);
+    end
+    d9_meas_point = d9_meas_point + tragus_pos.x + init_margin - 2;
+    
     d9 = pdist2([tragus_pos.x * xy_scale, ...
         tragus_pos.z * z_scale],...
         [d9_meas_point * xy_scale, z_scale * ear_section_1(d9_meas_point)]);
