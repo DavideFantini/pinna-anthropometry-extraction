@@ -376,7 +376,7 @@ function [d9] = measure_d9(pinna_img, tragus_pos, xy_scale, z_scale)
     ear_sect_sup_tragus(1:init_margin) = 0;
     end_concha_idx = find(ear_sect_sup_tragus, 1) + tragus_pos.x - 2;
 
-    concha_section = ear_section_1(tragus_pos.x + init_margin:end_concha_idx);
+    concha_section = ear_section_1(tragus_pos.x + init_margin:max(tragus_pos.x+(init_margin*2), end_concha_idx));
 
     % Compute the different between adjacent elements
     concha_section_diff = diff(concha_section, 1);
