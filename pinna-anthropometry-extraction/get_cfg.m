@@ -105,4 +105,6 @@ function [cfg] = get_cfg()
     cfg.img_features.lbp.n_neighbors = 4;
     cfg.img_features.lbp.radius = 4;
     cfg.img_features.lbp.norm = 'none';
+
+    cfg.img_features.features_to_remove = 73;
 end

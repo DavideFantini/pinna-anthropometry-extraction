@@ -81,4 +81,13 @@ function [img_features] = extract_img_features(cfg, pinna_imgs, cavity_info)
     end
 
 
+    % Put image features in table
+    img_features_names = compose('C%i-I%i', ...
+        [ones(1, size(img_features, 2)/3), ones(1, size(img_features, 2)/3)+1, ...
+        ones(1, size(img_features, 2)/3)+2]', [1:size(img_features, 2)]');
+    img_features_names = img_features_names(setdiff(1:size(img_features, 2), cfg.img_features.features_to_remove));
+    img_features = img_features(:, setdiff(1:size(img_features, 2), cfg.img_features.features_to_remove));
+
+    img_features = array2table(img_features, 'VariableNames', img_features_names);
+
 end
