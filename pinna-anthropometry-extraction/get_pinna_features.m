@@ -36,7 +36,7 @@ function [anthropometry,landmarks,img_features,info] = get_pinna_features(cfg,pi
 %   - right_pinna: whether in the provided images are represented right
 %                  pinnae. It is a boolean array with one element for each 
 %                  pinna. For the true elements, the corresponding pinna 
-%                  image will be flipped.
+%                  image will be mirrored.
 %                  [# pinnae]
 %
 % OUTPUT

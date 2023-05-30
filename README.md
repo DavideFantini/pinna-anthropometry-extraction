@@ -32,7 +32,7 @@ The function [**`get_pinna_features`**](./pinna-anthropometry-extraction/get_pin
      - If `landmarks` is a 3D array, then the 1st dimension represents the number of pinnae, the 2nd dimension represents the number of landmarks, while the 3rd dimension is the $x$ and $y$ coordinates &rarr; [# pinnae × # landmarks × 2].
     - `xy_scale` [default: 1]: scale factor of the $x$ and $y$ coordinates of the range image. The measurements made in $x$ and $y$ coordinates are multiplied by `xy_scale` to convert them from pixel units to the unit of measurement of your interest (e.g. cm). For example, if, in the range images you provides, 1 pixel corresponds to 0.1 cm, setting `xy_scale=0.1` convert the anthropometric measurements from pixels unit to centimenters.
     - `z_scale` [default: 1]: scale factor of the $z$ coordinate. The measurements made in z coordinate are multiplied by this factor to convert them from pixel units to the unit of measurement of your interest (e.g. cm).
-    - `right_pinna`: it is a boolean array with one element for each pinna indicating whether in the provided images are represented right pinnae. For the true elements, the corresponding pinna image will be flipped. This is need to ensure the code works properly.
+    - `right_pinna`: it is a boolean array with one element for each pinna indicating whether in the provided images are represented right pinnae. For the true elements, the corresponding pinna image will be mirrored. This is need to ensure the code works properly.
 
 ***OUTPUT***
  - `anthropometry`: table [# pinna images × # anthropometry] with the measured anthropometry. The columns represent the anthropometric parameters, while the rows represent the pinnae.

@@ -17,7 +17,7 @@ function [] = plot_results(cfg, pinna_imgs, anthropometry, landmarks, info, righ
 %   - right_pinna: whether in the provided images are represented right
 %                  pinnae. It is a boolean array with one element for each 
 %                  pinna. For the true elements, the corresponding pinna 
-%                  image will be flipped.
+%                  image will be mirrored.
 %                  [# pinnae]
 
     n_pinna_imgs = size(pinna_imgs, 1);
