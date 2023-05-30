@@ -1,6 +1,6 @@
 # Pinna Anthropometry Extraction
 Extraction of anthropometric features from pinna range images along with pinna landmarks and image features.
-These features are extracted according to the method proposed in the following paper:
+The description of the anthropometric parameters and their automatic measurement is reported in [*anthropometry_documentation.pdf*](./anthropometry_documentation.pdf). This repository is part of the method proposed in the following paper:
 
 > Davide Fantini, Federico Avanzini, Stavros Ntalampiras and Giorgio Presti (2023) "Automatic Extraction of Anthropometric Features for the Individualization of the Pinna-Related Transfer Function in the Median Plane"
 
