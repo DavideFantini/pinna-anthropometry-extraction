@@ -15,7 +15,9 @@ Some modifications have been performed to make the code compliant with our needs
 Tested with Matlab R2022b.
 
 ## How to use
-The function [`get_pinna_features`](./pinna-anthropometry-extraction/get_pinna_features.m) is all you need to make the repository works and obtain the pinna features.  This functions performs all the operations needed to extract the pinna features from the range image. In the follwing, we describe the inputs and the outputs of the function [`get_pinna_features`](./pinna-anthropometry-extraction/get_pinna_features.m).
+The script [*demo.m*](./scripts/demo.m) provides a simple demonstration of how this repository can be used to obtained a set of pinna features extracted from a pinna range image. The script's workflow is straightforward. First, the configuration parameters are loaded in the structure `cfg`, then the example pinna range images included in the file [*pinna_img_demo.mat*](./pinna_img_demo.mat) is loaded. Then, the function `get_pinna_features` is called. Finally, in the script the function `plot_results` is called to plot the landmarks and the anthropometry on the pinna range image.
+
+The function [**`get_pinna_features`**](./pinna-anthropometry-extraction/get_pinna_features.m) performs all the operations needed to extract the pinna features from the range image. In the follwing, we describe the inputs and the outputs of the function [`get_pinna_features`](./pinna-anthropometry-extraction/get_pinna_features.m):
 
 ***INPUT***
  - *REQUIRED*
@@ -37,12 +39,12 @@ The function [`get_pinna_features`](./pinna-anthropometry-extraction/get_pinna_f
  - `landmarks`: fitted landmarks with $x$, $y$ and $z$ coordinates [# pinna images × # landmarks X 3 coordinates]. If you provided `landmarks` in input, the output is the same with the $z$ coordinates values in addition.
  - `img_features`: table [# pinna images × # image features] with extracted image features.
 
-The script [*demo.m*](./scripts/demo.m) provides a simple demonstration of how this repository can be used to obtained a set of pinna features extracted from a pinna range image. The script's workflow is straightforward. First, the configuration parameters are loaded in the structure `cfg`, then the example pinna range image included in the file [*pinna_img_demo.mat*](./pinna_img_demo.mat) is loaded. Then, the function `get_pinna_features` is called. Finally, in the script the function `plot_results` is called to plot the landmarks and the anthropometry on the pinna range image.
 
 
 ## Repository structure
+ - [*pinna_img_demo.mat*](./pinna_img_demo.mat): *mat* file including the left and right pinnae range images of the subject with ID 3 in [HUTUBS dataset](https://depositonce.tu-berlin.de/items/dc2a3076-a291-417e-97f0-7697e332c960)
  - [*scripts*](./scripts/)
-	 - [*demo.m*](./scripts/demo.m): demo of how the repository works. Execute this script to get the features of the pinna range image in [*pinna_img_demo.mat*](./pinna_img_demo.mat) file.
+	 - [*demo.m*](./scripts/demo.m): demo of how the repository works. Execute this script to get the features of the pinna range images in [*pinna_img_demo.mat*](./pinna_img_demo.mat) file.
  - [*pinna-anthropometry-extraction*](./pinna-anthropometry-extraction/)
 	 - [*get_pinna_features.m*](./pinna-anthropometry-extraction/get_pinna_features.m): core funtion for the extraction of pinna anthropometry, landmarks and image features
 	 - [*get_cfg.m*](./pinna-anthropometry-extraction/get_cfg.m): function to get the configuration structure. Modify this configuration to change the code behavior.

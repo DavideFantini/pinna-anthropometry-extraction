@@ -1,4 +1,4 @@
-function [anthropometry, anthropometry_units] = measure_anthropometry(cfg,pinna_imgs,landmarks,cavity_info,NameValueArgs)
+function [anthropometry, characteristic_points] = measure_anthropometry(cfg,pinna_imgs,landmarks,cavity_info,NameValueArgs)
 % This function performs the propor extraction of the anthropometric
 % measurements given the pinna landmarks and images.
 %
@@ -54,6 +54,11 @@ function [anthropometry, anthropometry_units] = measure_anthropometry(cfg,pinna_
     % Initialize the measurements martrix
     anthropometry = zeros(n_pinna_imgs,n_metrics);
 
+    % Initialize characteristic points
+    characteristic_points.tragus.x = zeros(n_pinna_imgs, 1);
+    characteristic_points.tragus.y = zeros(n_pinna_imgs, 1);
+    characteristic_points.tragus.z = zeros(n_pinna_imgs, 1);
+    characteristic_points.helix = characteristic_points.tragus;
     
     % ======================= COMPUTE MEASURMENTS ======================= %
     for n = 1:n_pinna_imgs
@@ -71,6 +76,12 @@ function [anthropometry, anthropometry_units] = measure_anthropometry(cfg,pinna_
         % Estimate tragus and helix positions
         [tragus_pos, helix_pos] = get_pinna_characteristic_points(cfg, ...
             pinna_img, landmark);
+        characteristic_points.tragus.x(n) = tragus_pos.x;
+        characteristic_points.tragus.y(n) = tragus_pos.y;
+        characteristic_points.tragus.z(n) = tragus_pos.z;
+        characteristic_points.helix.x(n) = helix_pos.x;
+        characteristic_points.helix.y(n) = helix_pos.y;
+        characteristic_points.helix.z(n) = helix_pos.z;
 
         % Get the actual values of the measurement landmarks
         measurement_landmarks_values = get_measurement_landmarks_values( ...

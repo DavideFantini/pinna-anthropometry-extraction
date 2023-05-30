@@ -12,7 +12,7 @@ function [cfg] = get_cfg()
     cfg.mat_version = '-v7.3';
     % 0: no verbose - 1: minor verbose - 2: complete verbose
     cfg.verbose = 2;
-    cfg.heatmap_colormap = 'gray';
+
 
     % Size of the images used to train the ASM model
     cfg.img_width = 140;
@@ -107,4 +107,25 @@ function [cfg] = get_cfg()
     cfg.img_features.lbp.norm = 'none';
 
     cfg.img_features.features_to_remove = 73;
+
+
+    % ============================ RESULTS PLOT ========================= %
+    cfg.plot.heatmap_colormap = gray(256);
+    cfg.plot.heatmap_colormap = cfg.plot.heatmap_colormap(130:end,:);
+    
+    cfg.plot.landmarks_size = 25;
+    cfg.plot.landmarks_alpha = 0.7;
+    cfg.plot.arrow_w = 1;
+    cfg.plot.arrow_col = 'k';
+    cfg.plot.head_l = 4;
+    cfg.plot.head_w = 5;
+    cfg.plot.font_size = 14;
+    cfg.plot.font_name = 'Consolas';
+    cfg.plot.cavity_alpha = 0.25;
+    cfg.plot.cavity_color = 'k';
+    cfg.plot.cavity_edge = 0.8;
+    cfg.plot.label_col = 'w';
+
+    cfg.pinna_shape_parts_colors = {'#0077c7', '#7e2f8e', '#e39362', '#f5ed9d'};
+
 end

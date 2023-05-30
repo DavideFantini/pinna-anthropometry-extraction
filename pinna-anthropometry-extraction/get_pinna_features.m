@@ -1,4 +1,4 @@
-function [anthropometry,landmarks,img_features] = get_pinna_features(cfg,pinna_imgs,NameValueArgs)
+function [anthropometry,landmarks,img_features,info] = get_pinna_features(cfg,pinna_imgs,NameValueArgs)
 % Function to get the pinna features (anthropometry, landmarks and image
 % features) from range images.
 %
@@ -99,12 +99,16 @@ function [anthropometry,landmarks,img_features] = get_pinna_features(cfg,pinna_i
     % Get the info needed to compute area metrics 
     cavity_info = get_cavity_info(cfg, pinna_imgs, landmarks_xy);
 
+    info.cavity_info = cavity_info;
+
     
     % ==================== ANTHROPOMETRY EXTRACTION ===================== %
     % Compute measurements
-    anthropometry = measure_anthropometry( ...
+    [anthropometry, characteristic_points] = measure_anthropometry( ...
         cfg, pinna_imgs, landmarks_xy, cavity_info,...
         'xy_scale', xy_scale, 'z_scale', z_scale);
+
+    info.characteristic_points = characteristic_points;
     
     
     % =================== IMAGE FEATURES EXTRACTION ===================== %

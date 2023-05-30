@@ -1,4 +1,4 @@
-function [] = plot_landmarks_on_images(cfg, pinna_img, lnd, ax)
+function [] = plot_landmarks_on_images(pinna_img, lnd, ax, cmap)
 % Function that plot multiple images with their landamrks on them.
 % - img: array of images (y_res X x_res X n_img)
 % - lnd: array of landmarks (n_landmarks X n_coordinates X n_img).
@@ -6,14 +6,14 @@ function [] = plot_landmarks_on_images(cfg, pinna_img, lnd, ax)
 %        (optional)
 
     arguments
-        cfg
         pinna_img
         lnd
         ax = []
+        cmap = 'gray'
     end
 
 
-    pinna_img = pinna_img - 0.001;
+    pinna_img = pinna_img - 0.01;
 
     % Number of landmarks coordinates
     n_coord = size(lnd, 2);
@@ -27,10 +27,10 @@ function [] = plot_landmarks_on_images(cfg, pinna_img, lnd, ax)
     if n_coord == 2
 
         imagesc(ax, pinna_img);
-        colormap(cfg.heatmap_colormap); axis image; axis xy;
+        colormap(cmap); axis image; axis xy;
         hold on;
 
-        scatter(ax, lnd(n, :, 1), lnd(n, :, 2), 25, 'wo', 'filled', ...
+        scatter(ax, lnd(:, 1), lnd(:, 2), 25, 'wo', 'filled', ...
             'MarkerEdgeColor','k', 'LineWidth', 0.1);
 
 
@@ -39,10 +39,13 @@ function [] = plot_landmarks_on_images(cfg, pinna_img, lnd, ax)
         % Plot range image
         surf(pinna_img,'EdgeColor','none');
         axis tight;
+
         % Set the color map
-        colormap(cfg.heatmap_colormap);
+        colormap(cmap);
+
         % Display the color bar
         colorbar;
+
         % Set axis labels
         xlabel('X');
         ylabel('Y');
