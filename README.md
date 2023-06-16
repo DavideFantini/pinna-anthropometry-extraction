@@ -4,6 +4,10 @@ The description of the anthropometric parameters and their automatic measurement
 
 > Davide Fantini, Federico Avanzini, Stavros Ntalampiras and Giorgio Presti (2023) "Automatic Extraction of Anthropometric Features for the Individualization of the Pinna-Related Transfer Function in the Median Plane"
 
+The supplementary research data of this paper obtained with the code included in this repository are available in the public repository [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7982267.svg)](https://doi.org/10.5281/zenodo.7982267)
+
+---
+
 The ASM algorithm has been implemented with:
 
 > John W. Miller (2023). Face detection with Active Shape Models (ASMs) (https://github.com/johnwmillr/ActiveShapeModels), GitHub. Retrieved April 13, 2023.
