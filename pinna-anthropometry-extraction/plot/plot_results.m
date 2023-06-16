@@ -68,7 +68,7 @@ function [] = plot_results(cfg, pinna_imgs, anthropometry, landmarks, info, righ
         for p = 1:numel(cfg.landmarks.pinna_parts_idx)
             scatter(ax, landmark(cfg.landmarks.pinna_parts_idx{p}, 1), ...
                 landmark(cfg.landmarks.pinna_parts_idx{p}, 2), ...
-                cfg.plot.landmarks_size, hex2rgb(cfg.pinna_shape_parts_colors{p}), ...
+                cfg.plot.landmarks_size, cfg.pinna_shape_parts_colors{p}, ...
                 'o', 'filled', 'MarkerEdgeColor','k', 'LineWidth', 0.6, 'MarkerFaceAlpha', cfg.plot.landmarks_alpha);
     
         end
@@ -140,7 +140,7 @@ function [] = plot_results(cfg, pinna_imgs, anthropometry, landmarks, info, righ
     
         draw_annotation(fig,[x landmark(max_y_idx,1)],[y(2) y(2)],cfg.plot.arrow_col,'line','',0.75,false,'--');
     
-        text(x+1, mean(landmark(:,2)), '$d_5$', 'Interpreter','latex','FontSize',cfg.plot.font_size, 'Color',cfg.plot.label_col);
+        text(x+1, (max(landmark(:,2)) + min(landmark(:,2)))/2, '$d_5$', 'Interpreter','latex','FontSize',cfg.plot.font_size, 'Color',cfg.plot.label_col);
     
     
         % d6
@@ -154,7 +154,7 @@ function [] = plot_results(cfg, pinna_imgs, anthropometry, landmarks, info, righ
     
         draw_annotation(fig,[x(2) x(2)],[y landmark(max_x_idx,2)],cfg.plot.arrow_col,'line','',0.75,false,'--');
     
-        text(mean(landmark(:,1)), y+2, '$d_6$', 'Interpreter','latex','FontSize',cfg.plot.font_size, 'Color',cfg.plot.label_col);
+        text((max(landmark(:,1)) + min(landmark(:,1)))/2, y+2, '$d_6$', 'Interpreter','latex','FontSize',cfg.plot.font_size, 'Color',cfg.plot.label_col);
 
 
         % Set font name

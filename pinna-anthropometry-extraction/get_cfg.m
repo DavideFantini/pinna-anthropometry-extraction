@@ -54,7 +54,7 @@ function [cfg] = get_cfg()
     cfg.asm.m = 0.005;
 
     % Whether to visualize the fitting plot
-    cfg.asm.visualize_fitting = true;
+    cfg.asm.visualize_fitting = false;
 
 
     % =========================== ANTHROPOMETRY ========================= %
@@ -126,6 +126,8 @@ function [cfg] = get_cfg()
     cfg.plot.cavity_edge = 0.8;
     cfg.plot.label_col = 'w';
 
-    cfg.pinna_shape_parts_colors = {'#0077c7', '#7e2f8e', '#e39362', '#f5ed9d'};
+    cfg.pinna_shape_parts_colors = {[0, 0.4667, 0.7804],...
+        [0.4941, 0.1843, 0.5569], [0.8902, 0.5765, 0.3843], ...
+        [0.9608, 0.9294, 0.6157]};
 
 end
