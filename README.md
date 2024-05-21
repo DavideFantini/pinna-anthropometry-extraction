@@ -3,11 +3,13 @@ Extraction of anthropometric features from pinna landmarks and depth images.
 The description of the anthropometric parameters and their automatic measurement is reported in [*anthropometry_documentation.pdf*](./anthropometry_documentation.pdf).
 
 This repository is part of the following paper:
->Davide Fantini, Federico Avanzini, Stavros Ntalampiras and Giorgio Presti (2024) "Toward a Novel Set of Pinna Anthropometric Features for Individualizing Head-Related Transfer Function", *Sound and Music Computing Conference*
+>Davide Fantini, Federico Avanzini, Stavros Ntalampiras and Giorgio Presti (2024) "Toward a Novel Set of Pinna Anthropometric Features for Individualizing Head-Related Transfer Functions", *Sound and Music Computing Conference*
 
-The supplementary research data for the paper are included in this repository are available in the public repository [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10805885.svg)](https://doi.org/10.5281/zenodo.10805885)
+The supplementary research data for the paper are included in this repository are available in the public repository [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10805884.svg)](https://doi.org/10.5281/zenodo.10805884)
 
 Tested with Matlab R2023b.
+
+
 
 ## How to use
 The script [**pinna_anthropometry_extraction_demo.m**](./scripts/pinna_anthropometry_extraction_demo.m) provides a simple demonstration of how this repository can be used to obtained a set of pinna anthropometric parameters extracted from a pinna landmarks and range depth images. The script's workflow is straightforward. First, the configuration parameters are loaded in the structure `cfg`, then the example pinna landmarks and depth images included in the file [*pinna_demo.mat*](./pinna_demo.mat) are loaded. Then, the function [`get_pinna_anthropometry`](./pinna-anthropometry-extraction/get_pinna_anthropometry.m) is called. Finally, in the script the function [`plot_results.m`](./pinna-anthropometry-extraction/plot/plot_results.m) is called to plot the landmarks and the anthropometry on the pinna range images.
@@ -46,6 +48,20 @@ The function [**`get_pinna_anthropometry`**](./pinna-anthropometry-extraction/ge
        - [*measure_anthropometry.m*](./pinna-anthropometry-extraction/core/measure_anthropometry.m): function to measure the pinna anthropometry given the landmarks
        - [*get_cavity_info.m*](./pinna-anthropometry-extraction/core/get_cavity_info.m): function to extract the information needed for the pinna cavities
      - [*plot*](./pinna-anthropometry-extraction/plot/): folder of the visualization functions
-	   - [*plot_results.m*](./pinna-anthropometry-extraction/plot/plot_results.m): plot the results obtained from anthropometric measurement for the pinna depth image
+       - [*plot_results.m*](./pinna-anthropometry-extraction/plot/plot_results.m): plot the results obtained from anthropometric measurement for the pinna depth image
        - [*plot_landmarks_on_images.m*](./pinna-anthropometry-extraction/plot/plot_landmarks_on_images.m): plot the given landmarks on a depth image
      - [*utils*](./pinna-anthropometry-extraction/utils/): folder of utility functions
+
+## How to cite
+If you use this code, please cite the following paper:
+```
+@inproceedings{fantini2024toward,
+  title={Toward a Novel Set of Pinna Anthropometric Features for Individualizing Head-Related Transfer Functions},
+  author={Fantini, Davide and Ntalampiras, Stavros and Presti, Giorgio and Avanzini, Federico},
+  booktitle={Sound and Music Computing Conference},
+  year={2024}
+}
+```
+
+## Acknowledgments
+This work is part of [SONICOM](https://www.sonicom.eu/), a project that has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement [No 101017743](https://doi.org/10.3030/101017743).
