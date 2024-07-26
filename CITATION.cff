@@ -31,7 +31,8 @@ preferred-citation:
     given-names: "Federico"
     orcid: "https://orcid.org/0000-0002-1257-5878"
   title: "Toward a Novel Set of Pinna Anthropometric Features for Individualizing Head-Related Transfer Functions"
+  conference:
+    name: "Proceedings of the 21st Sound and Music Computing Conference"
   month: July
   year: 2024
   organization: "Sound and Music Computing Network"
-  url: "https://smcnetwork.org/smc2024/papers/SMC2024_paper_id141.pdf"
