@@ -2,8 +2,8 @@
 Extraction of anthropometric features from pinna landmarks and depth images.
 The description of the anthropometric parameters and their automatic measurement is reported in [*anthropometry_documentation.pdf*](./anthropometry_documentation.pdf).
 
-This repository is part of the following paper:
->Davide Fantini, Federico Avanzini, Stavros Ntalampiras and Giorgio Presti (2024) "Toward a Novel Set of Pinna Anthropometric Features for Individualizing Head-Related Transfer Functions", *Sound and Music Computing Conference*
+This repository is part of the following [paper](https://smcnetwork.org/smc2024/papers/SMC2024_paper_id141.pdf):
+>Davide Fantini, Federico Avanzini, Stavros Ntalampiras and Giorgio Presti (2024) "Toward a Novel Set of Pinna Anthropometric Features for Individualizing Head-Related Transfer Functions", In *Proceedings of the 21st Sound and Music Computing Conference*. Sound and Music Computing Network.
 
 The supplementary research data for the paper are included in this repository are available in the public repository [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10805884.svg)](https://doi.org/10.5281/zenodo.10805884)
 
@@ -53,13 +53,16 @@ The function [**`get_pinna_anthropometry`**](./pinna-anthropometry-extraction/ge
      - [*utils*](./pinna-anthropometry-extraction/utils/): folder of utility functions
 
 ## How to cite
-If you use this code, please cite the following paper:
+If you use this code, please cite the following [paper](https://smcnetwork.org/smc2024/papers/SMC2024_paper_id141.pdf):
 ```
 @inproceedings{fantini2024toward,
   title={Toward a Novel Set of Pinna Anthropometric Features for Individualizing Head-Related Transfer Functions},
   author={Fantini, Davide and Ntalampiras, Stavros and Presti, Giorgio and Avanzini, Federico},
-  booktitle={Sound and Music Computing Conference},
-  year={2024}
+  booktitle={Proceedings of the 21st Sound and Music Computing Conference},
+  year={2024},
+  month={July},
+  organization={Sound and Music Computing Network},
+  url={https://smcnetwork.org/smc2024/papers/SMC2024_paper_id141.pdf}
 }
 ```
 

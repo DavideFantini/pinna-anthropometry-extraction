@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Fantini"
+  given-names: "Davide"
+  orcid: "https://orcid.org/0000-0003-1332-0890"
+- family-names: "Ntalampiras"
+  given-names: "Stavros"
+  orcid: "https://orcid.org/0000-0003-3482-9215"
+- family-names: "Presti"
+  given-names: "Giorgio"
+  orcid: "https://orcid.org/0000-0001-7643-9915"
+- family-names: "Avanzini"
+  given-names: "Federico"
+  orcid: "https://orcid.org/0000-0002-1257-5878"
+title: "pinna-anthropometry-extraction"
+url: "https://github.com/DavideFantini/pinna-anthropometry-extraction"
+preferred-citation:
+  type: conference-paper
+  authors:
+  - family-names: "Fantini"
+    given-names: "Davide"
+    orcid: "https://orcid.org/0000-0003-1332-0890"
+  - family-names: "Ntalampiras"
+    given-names: "Stavros"
+    orcid: "https://orcid.org/0000-0003-3482-9215"
+  - family-names: "Presti"
+    given-names: "Giorgio"
+    orcid: "https://orcid.org/0000-0001-7643-9915"
+  - family-names: "Avanzini"
+    given-names: "Federico"
+    orcid: "https://orcid.org/0000-0002-1257-5878"
+  conference:
+    name: "Proceedings of the 21st Sound and Music Computing Conference"
+  month: July
+  title: "Toward a Novel Set of Pinna Anthropometric Features for Individualizing Head-Related Transfer Functions"
+  year: 2024
+  organization: "Sound and Music Computing Network"
+  url: "https://smcnetwork.org/smc2024/papers/SMC2024_paper_id141.pdf"
