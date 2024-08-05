@@ -54,7 +54,7 @@ The function [**`get_pinna_anthropometry`**](./pinna-anthropometry-extraction/ge
 
 ## How to cite
 If you use this code, please cite the following [paper](https://smcnetwork.org/smc2024/papers/SMC2024_paper_id141.pdf):
-```
+```bibtex
 @inproceedings{fantini2024toward,
   title={Toward a Novel Set of Pinna Anthropometric Features for Individualizing Head-Related Transfer Functions},
   author={Fantini, Davide and Ntalampiras, Stavros and Presti, Giorgio and Avanzini, Federico},
